@@ -1,16 +1,38 @@
-// hardhat.config.js
-require("@nomiclabs/hardhat-ethers");
-require('@openzeppelin/hardhat-upgrades');
+require("@nomiclabs/hardhat-waffle");
+
+// This is a sample Hardhat task. To learn how to create your own go to
+// https://hardhat.org/guides/create-task.html
+task("accounts", "Prints the list of accounts", async (taskArgs, hre) => {
+  const accounts = await hre.ethers.getSigners();
+
+  for (const account of accounts) {
+    console.log(account.address);
+  }
+});
+
+// You need to export an object to set up your config
+// Go to https://hardhat.org/config/ to learn more
 
 /**
  * @type import('hardhat/config').HardhatUserConfig
  */
 module.exports = {
-  solidity: "0.8.7",
-  networks: {
-    rinkeby: {
-      url: `https://eth-rinkeby.alchemyapi.io/v2/${alchemyApiKey}`,
-      accounts: {mnemonic: mnemonic}
-    }
+  solidity: {
+    version: "0.8.9",
+    settings: {
+      optimizer: {
+        enabled: true,
+      },
+    },
+  },
+
+  defaultNetwork: 'client',
+  networks:{
+    client:{
+      url:"RPC_CLIENT_URL",
+      accounts:[
+        "0dc178b655bb48f3478ebd42db1d40d9193d0ec96357ebd9ed0a5a165f5841cf"      
+      ]
+    },
   }
 };
