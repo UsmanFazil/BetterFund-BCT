@@ -26,13 +26,13 @@ module.exports = {
     },
   },
 
-  defaultNetwork: 'client',
-  networks:{
-    client:{
-      url:"RPC_CLIENT_URL",
-      accounts:[
-        "0dc178b655bb48f3478ebd42db1d40d9193d0ec96357ebd9ed0a5a165f5841cf"      
-      ]
+  defaultNetwork: "client",
+  networks: {
+    client: {
+      url: process.env.RPC_CLIENT_URL,
+      accounts: [
+        "0dc178b655bb48f3478ebd42db1d40d9193d0ec96357ebd9ed0a5a165f5841cf",
+      ],
     },
-  }
+  },
 };
