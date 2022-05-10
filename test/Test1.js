@@ -12,7 +12,10 @@ describe("Retiring tokens", function () {
     var token = await ethers.getContractFactory("ERC20Custom");
 
     Betterfund = await betterFundInterface.deploy();
-    await Betterfund.deployed();
+    await Betterfund.deployed({
+      gasLimit: 2500000,
+      gasPrice: accounts[0].getGasPrice(),
+    });
     await (
       await Betterfund.init("0xf2438A14f668b1bbA53408346288f3d7C71c10a1", {
         gasLimit: 2500000,
@@ -25,7 +28,10 @@ describe("Retiring tokens", function () {
       token.interface,
       accounts[0]
     );
-    console.log(await BCT_Token.balanceOf(accounts[0].address));
+    console.log(
+      "bct balance of account[0]",
+      await BCT_Token.balanceOf(accounts[0].address)
+    );
   });
 
   it("Should transfer some tokens to contract and check its balance", async function () {
