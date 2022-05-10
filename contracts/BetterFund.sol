@@ -37,12 +37,12 @@ contract BetterFund is Ownable, ReentrancyGuard, Pausable {
         address[] memory tcO2sAddresses;
         uint256[] memory tcO2Amounts;
 
-        bctToken.approve(address(bctToken), amount);
         (tcO2sAddresses, tcO2Amounts) = bctToken.redeemAuto2(amount);
 
         for (uint256 i = 0; i <= tcO2sAddresses.length; i++) {
 
             IToucanOffset(tcO2sAddresses[i]).retireAndMintCertificate(
+                "user",
                 User,
                 "test",
                 "test",
