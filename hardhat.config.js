@@ -31,9 +31,10 @@ module.exports = {
     client: {
       url:
         process.env.RPC_CLIENT_URL || "https://matic-mumbai.chainstacklabs.com",
-      accounts: [
-        "0dc178b655bb48f3478ebd42db1d40d9193d0ec96357ebd9ed0a5a165f5841cf",
-      ],
+      accounts: [process.env.PRIVATE_KEY || ""],
     },
+  },
+  mocha: {
+    timeout: 120000,
   },
 };
