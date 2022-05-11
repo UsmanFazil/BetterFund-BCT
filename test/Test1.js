@@ -5,43 +5,57 @@ describe("Retiring tokens", function () {
   var BCT_Token;
   var Betterfund;
   var tokensToBeretired = "0.00001";
+  let impersonatedAccount;
 
   before(async function () {
+    if (network.name === "hardhat") {
+      const addressToImpersonate = process.env.ADDRESS_TO_IMPERSONATE || "";
+      await network.provider.request({
+        method: "hardhat_impersonateAccount",
+        params: [addressToImpersonate],
+      });
+      impersonatedAccount = await ethers.getSigner(addressToImpersonate);
+    }
+
     accounts = await hre.ethers.getSigners();
-    var betterFundInterface = await ethers.getContractFactory("BetterFund");
-    var token = await ethers.getContractFactory("ERC20Custom");
+    var betterFundInterface = await ethers.getContractFactory(
+      "BetterFund",
+      impersonatedAccount
+    );
+    var token = await ethers.getContractFactory(
+      "ERC20Custom",
+      impersonatedAccount
+    );
 
     Betterfund = await betterFundInterface.deploy();
     await Betterfund.deployed({
       gasLimit: 2500000,
-      gasPrice: accounts[0].getGasPrice(),
+      gasPrice: impersonatedAccount.getGasPrice(),
     });
+
     await (
       await Betterfund.init("0xf2438A14f668b1bbA53408346288f3d7C71c10a1", {
         gasLimit: 2500000,
-        gasPrice: accounts[0].getGasPrice(),
+        gasPrice: impersonatedAccount.getGasPrice(),
       })
     ).wait();
 
     BCT_Token = new ethers.Contract(
       "0xf2438A14f668b1bbA53408346288f3d7C71c10a1",
       token.interface,
-      accounts[0]
-    );
-    console.log(
-      "bct balance of account[0]",
-      await BCT_Token.balanceOf(accounts[0].address)
+      impersonatedAccount
     );
   });
 
   it("Should transfer some tokens to contract and check its balance", async function () {
     await (
-      await BCT_Token.transfer(
+      await BCT_Token.connect(impersonatedAccount).transfer(
         Betterfund.address,
         ethers.utils.parseEther(tokensToBeretired),
-        { gasLimit: 2500000, gasPrice: accounts[0].getGasPrice() }
+        { gasLimit: 2500000, gasPrice: impersonatedAccount.getGasPrice() }
       )
     ).wait();
+
     expect(
       Number(await BCT_Token.balanceOf(Betterfund.address))
     ).to.be.greaterThanOrEqual(
@@ -52,9 +66,9 @@ describe("Retiring tokens", function () {
   it("Should retire the tokens", async function () {
     await (
       await expect(
-        Betterfund.RedeemBCTTRetireTCO2(
+        Betterfund.connect(impersonatedAccount).RedeemBCTTRetireTCO2(
           ethers.utils.parseEther(tokensToBeretired),
-          { gasLimit: 2500000, gasPrice: accounts[0].getGasPrice() }
+          { gasLimit: 2500000, gasPrice: impersonatedAccount.getGasPrice() }
         )
       ).to.not.be.reverted
     ).wait();

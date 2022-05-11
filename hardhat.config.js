@@ -27,7 +27,7 @@ module.exports = {
     },
   },
 
-  defaultNetwork: "client",
+  defaultNetwork: "hardhat",
   networks: {
     client: {
       url:
@@ -36,6 +36,18 @@ module.exports = {
         process.env.PRIVATE_KEY ||
           "0dc178b655bb48f3478ebd42db1d40d9193d0ec96357ebd9ed0a5a165f5841cf",
       ],
+    },
+    hardhat: {
+      forking: {
+        url:
+          process.env.POLYGON_RPC_CLIENT_URL ||
+          "https://matic-mainnet.chainstacklabs.com",
+        blockNumber: 26276654,
+        accounts: [
+          process.env.PRIVATE_KEY ||
+            "0dc178b655bb48f3478ebd42db1d40d9193d0ec96357ebd9ed0a5a165f5841cf",
+        ],
+      },
     },
   },
   mocha: {
