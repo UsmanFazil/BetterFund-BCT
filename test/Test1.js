@@ -34,14 +34,14 @@ describe("Retiring tokens", function () {
     });
 
     await (
-      await Betterfund.init("0xf2438A14f668b1bbA53408346288f3d7C71c10a1", {
+      await Betterfund.init("0x2F800Db0fdb5223b3C3f354886d907A671414A7F", {
         gasLimit: 2500000,
         gasPrice: impersonatedAccount.getGasPrice(),
       })
     ).wait();
 
     BCT_Token = new ethers.Contract(
-      "0xf2438A14f668b1bbA53408346288f3d7C71c10a1",
+      "0x2F800Db0fdb5223b3C3f354886d907A671414A7F",
       token.interface,
       impersonatedAccount
     );
