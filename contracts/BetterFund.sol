@@ -10,8 +10,9 @@ import "./ReentrancyGuard.sol";
 import "./Pausable.sol";
 import "./IToucanOffset.sol";
 import "./IBCT.sol";
+import "./IERC721TokenReceiver.sol";
 
-contract BetterFund is Ownable, ReentrancyGuard, Pausable {
+contract BetterFund is Ownable, ReentrancyGuard, Pausable, ERC721TokenReceiver {
     using SafeMath for uint256;
 
     IBCT public bctToken;
@@ -20,26 +21,25 @@ contract BetterFund is Ownable, ReentrancyGuard, Pausable {
     bool private initDone;
     address constant User = 0xa08a9bA3EaC7EC46FB2e6072A966219cD98D6D69;
 
+    event Received();
 
-    function init(
-        address _bctAddress
-    ) public {
-        require(!initDone, "init done"); 
+    function init(address _bctAddress) public {
+        require(!initDone, "init done");
         BCT = _bctAddress;
         bctToken = IBCT(_bctAddress);
         _Ownable_init(msg.sender);
         initDone = true;
     }
 
-    // function to redeem BCT tokens 
-    // calls retire and mint certificate fuinction to reture received TCO2 tokens. 
+    // function to redeem BCT tokens
+    // calls retire and mint certificate fuinction to reture received TCO2 tokens.
     function RedeemBCTTRetireTCO2(uint256 amount) public {
         address[] memory tcO2sAddresses;
         uint256[] memory tcO2Amounts;
 
         (tcO2sAddresses, tcO2Amounts) = bctToken.redeemAuto2(amount);
 
-        for (uint i = 0; i < tcO2sAddresses.length; i++) {
+        for (uint256 i = 0; i < tcO2sAddresses.length; i++) {
             if (tcO2Amounts[i] < 1e15) continue;
             IToucanOffset(tcO2sAddresses[i]).retireAndMintCertificate(
                 "user",
@@ -49,6 +49,20 @@ contract BetterFund is Ownable, ReentrancyGuard, Pausable {
                 tcO2Amounts[i]
             );
         }
+    }
+
+    function onERC721Received(
+        address _operator,
+        address _from,
+        uint256 _tokenId,
+        bytes calldata _data
+    ) external override returns (bytes4) {
+        _operator;
+        _from;
+        _tokenId;
+        _data;
+        emit Received();
+        return 0x150b7a02;
     }
 
     function PauseContract() public anyAdmin {
